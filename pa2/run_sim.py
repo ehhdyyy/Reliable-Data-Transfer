@@ -38,7 +38,7 @@ from engine import TraceLogger, Channel, Simulator, Timer
 # manifest and used to name your submission zip, so the TA can tell whose
 # submission she's looking at without opening it.
 # ---------------------------------------------------------------------------
-STUDENT_NAME = "YOUR_NAME_HERE"
+STUDENT_NAME = "EDMOND PAN"
 
 # ---------------------------------------------------------------------------
 # Scenarios: each is a fixed, deterministic script describing what happens

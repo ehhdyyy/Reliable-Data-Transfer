@@ -95,12 +95,15 @@ class SRReceiver(DeliverMixin):
         # SR always ACKs individually, in or out of order.
         ack = Packet(seq, is_ack=True, acknum=seq)
         self.ack_channel.send(ack, current_tick, self.sender_callback)
-
+        self.buffer[seq] = packet.data
+        self._logger.log("DEBUG", "receiver", f"buffer= {self.buffer}")
         if seq == self.base:
-            self.deliver(packet.data)
+            self.deliver(self.buffer.pop(self.base))
+            self._logger.log("DEBUG", "receiver", f"buffer= {self.buffer}")
             self.base = (self.base + 1) % NUM_SEQNUMS
             while self.base in self.buffer:
                 self.deliver(self.buffer.pop(self.base))
+                self._logger.log("DEBUG", "receiver", f"buffer= {self.buffer}")
                 self.base = (self.base + 1) % NUM_SEQNUMS
         else:
             pass

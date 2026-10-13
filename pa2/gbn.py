@@ -61,7 +61,9 @@ class GBNSender:
     def timeout(self, current_tick):
         packet = self.sent_packets.get(self.base)
         if packet is not None:
-            self.data_channel.send(packet.copy(), current_tick, self.receiver_callback)
+            for(seqnum, packet) in self.sent_packets.items():
+                self.logger.log("DEBUG", "sender", f"resending seq={seqnum}")
+                self.data_channel.send(packet.copy(), current_tick, self.receiver_callback)
         self.timer.start(current_tick)
 
     def rdt_rcv(self, packet, current_tick):
@@ -93,7 +95,10 @@ class GBNSender:
                 # self.dup_ack_count, self.last_ack_seen, and
                 # self._log_fast_retransmit(). Reset self.dup_ack_count
                 # to 0 once you trigger it. See the assignment brief.
-                pass
+                if self.dup_ack_count >= DUP_ACK_THRESHOLD:
+                    self._log_fast_retransmit(acknum)
+                    self.data_channel.send(packet.copy(), current_tick, self.receiver_callback)
+                    self.dup_ack_count = 0
 
     def get_timers(self):
         return {None: self.timer}
