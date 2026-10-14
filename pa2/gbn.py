@@ -96,8 +96,10 @@ class GBNSender:
                 # self._log_fast_retransmit(). Reset self.dup_ack_count
                 # to 0 once you trigger it. See the assignment brief.
                 if self.dup_ack_count >= DUP_ACK_THRESHOLD:
-                    self._log_fast_retransmit(acknum)
-                    self.data_channel.send(packet.copy(), current_tick, self.receiver_callback)
+                    retransmit_packet = self.sent_packets.get(self.base)
+                    if retransmit_packet is not None:
+                        self._log_fast_retransmit(self.base)
+                        self.data_channel.send(retransmit_packet.copy(), current_tick, self.receiver_callback)
                     self.dup_ack_count = 0
 
     def get_timers(self):
