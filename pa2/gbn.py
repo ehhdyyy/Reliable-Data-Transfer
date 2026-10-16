@@ -98,9 +98,10 @@ class GBNSender:
                 if self.dup_ack_count >= DUP_ACK_THRESHOLD:
                     retransmit_packet = self.sent_packets.get(self.base)
                     if retransmit_packet is not None:
-                        self._log_fast_retransmit(self.base)
                         self.data_channel.send(retransmit_packet.copy(), current_tick, self.receiver_callback)
+                        self._log_fast_retransmit(self.base)
                     self.dup_ack_count = 0
+                
 
     def get_timers(self):
         return {None: self.timer}
